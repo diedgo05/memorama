@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Memorama FaFa</title>
+    <style>
+      #juego button[data-state="fija"] {
+        box-shadow: 0 0 0 4px #60a5fa;
+      }
+
+      #juego button:hover {
+        transform: scale(1.05);
+      }
+
+      #juego button img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: inherit;
+      }
+      #juego button {
+        width: 100%;
+        height: 100%;
+        border-radius: 20px;
+        box-shadow: 06px 12px rgba(0, 0, 0, 0.5);
+        cursor: pointer;
+      }
+
+      #juego {
+        display: grid;
+        grid-template-columns: repeat(4, 150px);
+        grid-auto-rows: 200px;
+        gap: 20px;
+        background: lightblue;
+        border-radius: 12px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <img
+      src="https://i.postimg.cc/SxX0284f/cachetes-ijodeperra.jpg"
+      alt="Cachetes hijo de perra"
+      class="portada"
+      style="width: 100%; height: auto; display: block"
+    />
+    <h1 style="color: green; text-align: left; margin: 30px 0" class="titulo">
+      Frutitas
+    </h1>
+    <h2
+      class="tematica"
+      style="
+        color: #b569d4;
+        text-align: left;
+        margin: 30px 0 10px 0;
+        font-size: 1.5rem;
+        text-shadow: 0 2px 4px rgba(255, 182, 255, 0.5);
+      "
+    >
+      Temática del juego
+    </h2>
+    <p
+      class="tematica_p"
+      style="
+        color: #e94f96;
+        text-align: left;
+        margin: 10px 0 30px 0;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 12px;
+        padding: 10px 15px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      "
+    >
+      “Mi memorama trata sobre animales de la selva…”
+    </p>
+    <h2
+      class="motivacion"
+      style="
+        color: #b569d4;
+        text-align: left;
+        margin: 30px 0 10px 0;
+        font-size: 1.5rem;
+        text-shadow: 0 2px 4px rgba(255, 182, 255, 0.5);
+      "
+    >
+      Motivación y propósito
+    </h2>
+    <p
+      style="
+        color: #e94f96;
+        text-align: left;
+        margin: 10px 0 30px 0;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 12px;
+        padding: 10px 15px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      "
+    >
+      “Elegí este tema porque me gustan los animales y quiero que otros
+      aprendan…”
+    </p>
+    <ul
+      class="viñetas"
+      style="
+        color: #333;
+        text-align: left;
+        margin: 10px 0 30px 20px;
+        font-size: 1rem;
+      "
+    >
+      <h4>Descripción de cartas</h4>
+      <li>Pera</li>
+      <li>guineo</li>
+      <li>Durazno</li>
+      <li>limon</li>
+    </ul>
+
+    <ol
+      class="instrucciones"
+      style="
+        color: #333;
+        text-align: left;
+        margin: 10px 0 30px 20px;
+        font-size: 1rem;
+        list-style-type: decimal;
+      "
+    >
+      <h4>Instrucciones de juego</h4>
+      <li>Elegimos el tema.</li>
+    </ol>
+    <div id="juego"></div>
+    <script>
+      const tapaSRC = "https://i.postimg.cc/tTpgD5bm/FONDO.png";
+      const pares = [
+        { key: "A", src: "https://i.postimg.cc/L54n4V0Z/DURAZNITO.png" },
+        { key: "B", src: "https://i.postimg.cc/rpSmSHBr/LIMONCITO.png" },
+        {
+          key: "C",
+          src: "https://i.postimg.cc/8P5jqt62/Ilustracio-n-sin-ti-tulo-24.png",
+        },
+        { key: "D", src: "https://i.postimg.cc/6qHT8GDb/BANANANITA.png" },
+      ];
+      const baraja = [];
+      pares.forEach((p) => {
+        baraja.push({ key: p.key, src: p.src });
+        baraja.push({ key: p.key, src: p.src });
+      });
+      function barajar(a) {
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+      barajar(baraja);
+      const cont = document.getElementById("juego");
+      let seleccionadas = [];
+      let bloqueado = false;
+      baraja.forEach((carta) => {
+        const btn = document.createElement("button");
+        const img = document.createElement("img");
+        img.src = tapaSRC;
+        btn.dataset.key = carta.key;
+        btn.dataset.front = carta.src;
+        btn.dataset.state = "oculta";
+        btn.addEventListener("click", () => {
+          if (bloqueado) return;
+          if (btn.dataset.state !== "oculta") return;
+          img.src = btn.dataset.front;
+          btn.dataset.state = "descubierta";
+          seleccionadas.push(btn);
+          if (seleccionadas.length === 2) {
+            bloqueado = true;
+            const [a, b] = seleccionadas;
+            if (a.dataset.key === b.dataset.key) {
+              a.dataset.state = "fija";
+              b.dataset.state = "fija";
+              seleccionadas = [];
+              bloqueado = false;
+            } else {
+              setTimeout(() => {
+                a.querySelector("img").src = tapaSRC;
+                b.querySelector("img").src = tapaSRC;
+                a.dataset.state = "oculta";
+                b.dataset.state = "oculta";
+                seleccionadas = [];
+                bloqueado = false;
+              }, 800);
+            }
+          }
+        });
+
+        btn.appendChild(img);
+        cont.appendChild(btn);
+      });
+    </script>
+  </body>
+</html>
